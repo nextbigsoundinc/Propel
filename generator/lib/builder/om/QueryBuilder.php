@@ -1072,10 +1072,18 @@ abstract class ".$this->getClassname()." extends " . $parentClass . "
      */
     public function filterBy{$relName}($objectName, \$comparison = Criteria::EQUAL)
     {
-        return \$this
+        \$query = \$this
             ->use{$relationName}Query()
-            ->filterBy{$relName}($objectName, \$comparison)
-            ->endUse();
+            ->filterBy{$relName}($objectName, \$comparison);
+
+        /* Custom edit by Next Big Sound */
+        if ({$relationName}Query::isSoftDeleteEnabled()) {
+            \$query->filterByDeletedAt(null);
+        }
+        /* End of custom edit by Next Big Sound */
+
+        \$query->endUse();
+        return \$query;
     }
 ";
     }
