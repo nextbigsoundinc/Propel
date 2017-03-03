@@ -91,6 +91,34 @@ public function unDelete(PropelPDO \$con = null)
 	{
 		$script = "if (!empty(\$ret) && {$builder->getStubQueryBuilder()->getClassname()}::isSoftDeleteEnabled()) {";
 
+		$script .= <<<END
+	/*
+		Custom edit by Next Big Sound:
+		Cascade soft-delete to many-to-many objects
+	*/
+
+	// Iterates over model fields, looking for collections
+	foreach (get_object_vars(\$this) as \$foreign => \$null) {
+
+		// Ignores fields that aren't a collection of many-to-many models
+		\$regex = sprintf('#coll(%ss.+)#', get_class(\$this));
+		if (!preg_match(\$regex,\$foreign,\$match)) {
+			continue;
+		}
+
+		// Gets a collection of the related models
+		\$func = sprintf('get%s', \$match[1]);
+		\$aModel = \$this->\$func();
+
+		// Deletes the collection models
+		foreach (\$aModel as \$oModel) {
+			\$oModel->delete();
+		}
+	}
+
+	/* End of custom edit by Next Big Sound */
+END;
+
 		// prevent updated_at from changing when using a timestampable behavior
 		if ($this->getTable()->hasBehavior('timestampable')) {
 			$script .= "
