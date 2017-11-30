@@ -76,7 +76,9 @@ class ModelCriteria extends Criteria
         $this->setDbName($dbName);
         $this->originalDbName = $dbName;
         $this->modelName = $modelName;
-        $this->modelPeerName = constant($this->modelName . '::PEER');
+        $const = '\\' . $this->modelName . '::PEER';
+        error_log($const);
+        $this->modelPeerName = constant($const);
         $this->originalModelAlias = $modelAlias;
         $this->modelAlias = $modelAlias;
         $this->tableMap = Propel::getDatabaseMap($this->getDbName())->getTableByPhpName($this->modelName);
