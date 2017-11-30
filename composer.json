@@ -14,5 +14,8 @@
   ],
   "require": {
     "php": ">=5.2.4"
+  },
+  "autoload": {
+    "files": ["runtime/lib/Propel.php"]
   }
 }
